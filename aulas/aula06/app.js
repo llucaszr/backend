@@ -14,4 +14,27 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
+const tarefas = [];
+
+app.get("/tarefas", (req, res) => {
+  res.json(tarefas);
+});
+
+app.post("/tarefas", (req, res) => {
+  // const novaTarefa = {req.body.nome, req.body.concluida }
+  const novaTarefa = {
+    ...req.body,
+    id: tarefas.length + 1,
+  };
+  tarefas.push(novaTarefa);
+  res.status(201).json(novaTarefa);
+});
+
+app.get("/tarefas/:id", (req, res) => {
+  const { id } = req.params;
+  const tarefaEcontrada = tarefas.find((item) => item.id === parseInt(id));
+  if (tarefaEcontrada) return res.json(tarefaEcontrada);
+  else res.status(404).json({ msg: "Tarefa não encontrada" });
+});
+
 module.exports = app;
