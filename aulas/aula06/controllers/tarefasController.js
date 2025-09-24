@@ -1,51 +1,44 @@
-const tarefas = [];
+const model = require("../models/tarefaModel");
 
-listarTarefas = (req, res) => {
-  res.json(tarefas);
+const listarTarefas = (req, res) => {
+  res.json(model.listar());
 };
 
-criarTarefa = (req, res) => {
-  // const novaTarefa = {req.body.nome, req.body.concluida }
-  const novaTarefa = {
-    ...req.body,
-    id: tarefas.length + 1,
-  };
-  tarefas.push(novaTarefa);
+const criarTarefa = (req, res) => {
+  const novaTarefa = model.criar(req.body);
   res.status(201).json(novaTarefa);
 };
 
-buscarId = (req, res) => {
+const buscarTarefa = (req, res, next) => {
   const { id } = req.params;
-  const tarefaEcontrada = tarefas.find((item) => item.id === parseInt(id));
-  if (tarefaEcontrada) return res.json(tarefaEcontrada);
-  else res.status(404).json({ msg: "Tarefa não encontrada" });
-};
-
-atualizarId = (req, res) => {
-  const { id } = req.params;
-  const tarefaEcontrada = tarefas.find((item) => item.id == id);
-  if (tarefaEcontrada) {
-    tarefaEcontrada.nome = req.body.nome;
-    tarefaEcontrada.concluida = req.body.concluida;
-    return res.json(tarefaEcontrada);
-  }
+  const tarefaEcontrada = model.obter(id);
+  if (tarefaEcontrada) return next();
   res.status(404).json({ msg: "Tarefa não encontrada" });
 };
 
-deletarId = (req, res) => {
+const obterTarefa = (req, res) => {
   const { id } = req.params;
-  const posicao = tarefas.findIndex((item) => item.id == id);
-  if (posicao >= 0) {
-    tarefas.splice(posicao, 1);
-    res.status(204).end();
-  }
-  res.status(404).json({ msg: "Tarefa não encontrada" });
+  const tarefaEcontrada = model.obter(id);
+  res.json(tarefaEcontrada);
+};
+
+const atualizarTarefa = (req, res) => {
+  const { id } = req.params;
+  const tarefaEcontrada = model.atualizar({ id, ...req.body });
+  res.json(tarefaEcontrada);
+};
+
+const removerTarefa = (req, res) => {
+  const { id } = req.params;
+  model.remover(id);
+  res.status(204).end();
 };
 
 module.exports = {
   listarTarefas,
   criarTarefa,
-  buscarId,
-  atualizarId,
-  deletarId,
+  buscarTarefa,
+  obterTarefa,
+  atualizarTarefa,
+  removerTarefa,
 };

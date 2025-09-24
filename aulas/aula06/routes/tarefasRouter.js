@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.get("/", controller.listarTarefas);
 router.post("/", controller.criarTarefa);
-router.get("/:id", controller.buscarId);
-router.put("/:id", controller.atualizarId);
-router.delete("/:id", controller.deletarId);
+router.get("/:id", controller.buscarTarefa, controller.obterTarefa);
+router.put("/:id", controller.buscarTarefa, controller.atualizarTarefa);
+router.delete("/:id", controller.buscarTarefa, controller.removerTarefa);
 
 module.exports = router;
