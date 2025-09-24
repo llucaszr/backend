@@ -12,14 +12,15 @@ const criarTarefa = (req, res) => {
 const buscarTarefa = (req, res, next) => {
   const { id } = req.params;
   const tarefaEcontrada = model.obter(id);
-  if (tarefaEcontrada) return next();
+  if (tarefaEcontrada) {
+    req.tarefa = tarefaEcontrada;
+    return next();
+  }
   res.status(404).json({ msg: "Tarefa não encontrada" });
 };
 
 const obterTarefa = (req, res) => {
-  const { id } = req.params;
-  const tarefaEcontrada = model.obter(id);
-  res.json(tarefaEcontrada);
+  res.json(req.tarefa);
 };
 
 const atualizarTarefa = (req, res) => {
