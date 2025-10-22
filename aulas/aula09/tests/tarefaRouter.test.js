@@ -11,7 +11,16 @@ describe("Testes do recurso /tarefas", () => {
   test("POST / deve retornar 201", async () => {
     const response = await request.post(url).send({ nome: "Estudar" });
     expect(response.status).toBe(201);
+    expect(response.body._id).toBeDefined();
+    expect(response.body.nome).toBe("Estudar");
+    expect(response.body.concluida).toBe(false);
     id = response.body._id;
+  });
+
+  test("POST / deve retornar 422", async () => {
+    const response = await request.post(url);
+    expect(response.status).toBe(422);
+    expect(response.body.msg).toBe("Nome da tarefa é obrigatório");
   });
 
   test("GET / deve retornar 200", async () => {
@@ -19,9 +28,24 @@ describe("Testes do recurso /tarefas", () => {
     expect(Array.isArray(response.body)).toBe(true);
   });
 
-  test("Get /id deve retonar 200", async () => {
+  test("GET /id deve retonar 200", async () => {
     const response = await request.get(`${url}/${id}`);
     expect(response.status).toBe(200);
+    expect(response.body._id).toBeDefined();
+    expect(response.body.nome).toBe("Estudar");
+    expect(response.body.concluida).toBe(false);
+  });
+
+  test("GET /id deve retonar 400", async () => {
+    const response = await request.get(`${url}/0`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID inválido");
+  });
+
+  test("GET /id deve retonar 404", async () => {
+    const response = await request.get(`${url}/000000000000000000000000`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe("Tarefa não encontrada");
   });
 
   test("PUT /id deve retornar 200", async () => {
@@ -30,10 +54,35 @@ describe("Testes do recurso /tarefas", () => {
       concluida: true,
     });
     expect(response.status).toBe(200);
+    expect(response.body.nome).toBe("Estudar Express");
+    expect(response.body.concluida).toBe(true);
+  });
+
+  test("PUT /id deve retonar 400", async () => {
+    const response = await request.put(`${url}/0`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID inválido");
+  });
+
+  test("PUT /id deve retonar 404", async () => {
+    const response = await request.put(`${url}/000000000000000000000000`);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe("Tarefa não encontrada");
   });
 
   test("DELETE /id deve retornar 204", async () => {
     const response = await request.delete(`${url}/${id}`);
     expect(response.status).toBe(204);
+  });
+
+  test("DELETE /id deve retonar 400", async () => {
+    const response = await request.delete(`${url}/0`);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("ID inválido");
+  });
+
+  test("DELETE /id deve retornar 404", async () => {
+    const response = await request.delete(`${url}/${id}`);
+    expect(response.status).toBe(404);
   });
 });
