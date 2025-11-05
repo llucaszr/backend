@@ -8,6 +8,8 @@ router.post("/login", (req, res) => {
   // simula autenticação
   if (username === "jose@iesb.br" && password === "abcd1234") {
     const payload = {
+      iss: "Minha API",
+      aud: "Você",
       email: username,
       nome: "jose",
     };
@@ -19,5 +21,7 @@ router.post("/login", (req, res) => {
   }
   return res.status(401).json({ msg: "Credenciais inválidas" });
 });
+
+router.post("/renovar", auth.verificarToken, auth.renovarToken);
 
 module.exports = router;
