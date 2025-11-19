@@ -5,7 +5,11 @@ const logger = require("morgan");
 const indexRouter = require("./routes/index");
 const tarefaRouter = require("./routes/tarefasRouter");
 const app = express();
+const cors = require("cors");
 
+app.use(cors({
+    origin: "http://localhost:8000/"
+}));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
